@@ -1,5 +1,5 @@
  // #####################################
-// Library Conference Papers Bot v 1.1 ##
+// Library Conference Papers Bot v 1.2 ##
 // ######################################
 
 // Create a simple server to keep the bot running
@@ -16,8 +16,8 @@ var fs =require("fs");
 var request = require("request");
 var FeedParser = require ("feedparser");
 var WordPOS = require('wordpos');
+var pos = require('pos');
 var Twit = require('twit');
-
 // initiate wordpos
 wordpos = new WordPOS();
 
@@ -34,32 +34,42 @@ var capitalise = function(x) {
     return x.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
 
-// stop words - if any of these are in the words from Reuters, we try again.
-stopWords = ['by', 'Exclusive','Exclusive:','opinion','Opinion:','says','say','source','Source','sources','Sources','to']
-// function to check
-function checkStopWords(arr, val) {
-    return arr.some(function(arrVal) {
-        return val === arrVal;
-    });
-};
+// title case - capitalise the initial letter of the word when called
+function titleCase(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 // Set timeout to loop the whole thing every 2.1 hours
-var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
+// var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
+
+// *******************++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FOR TESTING RUN EVERY 2 MINUTES
+var timerVar = setInterval (function () {writeAbstracts()}, 120000);
 
 // Run the bot when the timer expires
 function writeAbstracts() {
 
-var sArray = []
+	// function with closure to add stuff to an array from inside other functions
+	var addToArray = (function(sentence){
+		var sArray = [];
+		return function(sentence) {
+			sArray.push(sentence)
+			// Once we have 10 headlines we choose one at random
+			if (sArray.length > 9) {
+				choice = random.pick(sArray)
+				var option1 = '\n' + choice;
+				// then we push it to the options.txt file
+				fs.appendFileSync('options.txt', option1);
+				console.log(option1)
+			}
+		}
+	})();
 
 	// set a Date variable for yesterday.
 	var dateNow = new Date();
 	var newest = dateNow - 8.64e+7;
-
-	// generate a random value between 1 and however many lines there are in the phrases.txt file, minus one
-	var intgr = random.integer(1, 60);
 	// use the random value to pick a line from the phrases.txt file.
 	var phrases = fs.readFileSync('phrases.txt').toString().split('\n');
-	cliche = phrases[intgr];
+	cliche = random.pick(phrases)
 
 	// Get Reuters tech news from their RSS feed
 	var req = request("http://feeds.reuters.com/reuters/technologyNews");
@@ -77,7 +87,7 @@ var sArray = []
 	  stream.pipe(feedparser);
 	});
 
-	// deal with any errors in the code
+	// deal with any errors in feedparser
 	feedparser.on('error', function(error) {
 	  console.error(error); 
 	});
@@ -91,43 +101,55 @@ var sArray = []
 	  while (item = stream.read()) {
 		t = item.title;
 
-			// split the headline into an array of words
-			var pHead = t.split(" ");
-			// Get the first, second and last words.
-			// If any of them match the stopWords list, simply get rid of it.
-			// get the first word
-			var newTitleOne = pHead[0];
-			var noGood = checkStopWords(stopWords, newTitleOne);
-			if (noGood) {
-				newTitleOne = "";
-			};				
-			// get second word
-			var newTitleTwo = pHead[1];
-			var noGoodTwo = checkStopWords(stopWords, newTitleTwo);
-			if (noGoodTwo) {
-				newTitleTwo = "";
-			} else newTitleTwo = " " + newTitleTwo;
-			// get the last word
-			var sEnd = pHead.length;
-			var end = sEnd - 1;
-			var	lastWord = pHead[end];
-			var noGoodLast = checkStopWords(stopWords, lastWord);
-			if (noGoodLast) {
-				lastWord = "";
-			} else lastWord = " " + lastWord;
+		var words = new pos.Lexer().lex(t);
+		var tagger = new pos.Tagger();
+		var taggedWords = tagger.tag(words);
+		var hasColon = t.includes(":");
+		var colon = t.lastIndexOf(":");
+		var sentence = t.slice(0, colon);
+		var joiner = [': what it means for ',': ramifications for ',': how it could revolutionise ',': how it could influence ']
 
-			var newStr = newTitleOne + newTitleTwo + lastWord;
-			// make a sentence and push to sArray
-			var mySentence = newStr + ': what it means for ' + cliche + '.';			
-			sArray.push(mySentence);
-			// the feed will have 20 headlines, so once we've got that many we choose one at random
-			if (sArray.length > 19) {
-				var x = random.integer(0,19);
-				choice = sArray[x];
-				var option1 = '\n' + choice;
-				// then we push it to the options.txt file
-				fs.appendFileSync('options.txt', option1);
-			}
+		if (hasColon) {
+			var mySentence = (titleCase(sentence) + random.pick(joiner) + cliche + '.');
+			addToArray(mySentence)
+		} else {
+		    		for (i in taggedWords) {
+					    var taggedWord = taggedWords[i];
+					    var word = taggedWord[0];
+					    var tag = taggedWord[1];
+
+					    if (tag === "IN") {
+					    	return makePhrase(word)
+					    } else if (tag === "TO") {
+					 	   return getPhrase(word)    	
+					    } else if (tag === "PDT") {
+					    	return getPhrase(word)
+					    }
+					};
+
+					function makePhrase(word) {
+						var array = t.split(" ");
+						var splitter = array.indexOf(word);
+						var start = splitter + 1;
+						var newArray = array.slice(start);
+						var string = newArray.toString();
+						var sentence = string.replace(/,/g," ");
+						var finalSentence = sentence.replace(/  /g, " & ");
+						var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
+						addToArray(mySentence)
+					};
+
+					function getPhrase(word) {
+						var array = t.split(" ");
+						var splitter = array.indexOf(word);
+						var newArray = array.slice(0, splitter);
+						var string = newArray.toString();
+						var sentence = string.replace(/,/g," ");
+						var finalSentence = sentence.replace(/  /g, " & ");
+						var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
+						addToArray(mySentence)
+					};
+				}
 		}
 	});
 	// generate some random nouns.
@@ -177,17 +199,15 @@ var sArray = []
 		var pairs = ["Why " + clean1 + " Could be the " + clean2 + " of Libraries.", "How Libraries are Bringing " + clean1 + " and " + clean2 + " Together at Last."]
 		var Option3 = '\n' + random.pick(pairs);
 		fs.appendFileSync('options.txt', Option3);
-		var futurePast = ["Is " + clean1 + " the Future of Libraries?","Are Libraries the Original " + clean1 + "?"]
+		var futurePast = ["Is " + clean1 + " the Future of Libraries?","Are Libraries the Original " + clean1 + "?", "Has " + clean1 + " Killed Libraries?"]
 		var Option4 = '\n' + random.pick(futurePast);
 		fs.appendFileSync('options.txt', Option4);
 
 	});
 
-	// generate a random value between 1 and however many lines there are in the phrases.txt file
-	var k = random.integer(1, 4);
-	// use the random value to pick one of the lines we created in the phrases.txt file.
+	// randomly pick one of the lines we created in the phrases.txt file.
 	var options = fs.readFileSync('options.txt').toString().split('\n');
-	tweet = options[k];
+	tweet = random.pick(options);
 
 	//tweet the title!
 	T.post('statuses/update', {status: tweet}, function(err, data, response){

@@ -11,8 +11,8 @@ the Dominance of Google
 Wikipedia in Libraries
 #OpenAccess Publishing
 Elsevier
-@EBSCO
-@OCLC
+EBSCO
+OCLC
 Chromebooks
 iPad Vending Machines
 Lego Clubs
@@ -51,16 +51,23 @@ One-Shot Instruction
 Digital Natives
 Patron-Driven Acquisitions
 the MLIS
-@PLOSOne
+PLOSOne
 WiFi Speeds
 Getting Rid of the OPAC
 Passwords on Post-It Notes
 Patron Privacy
 Passive-Aggressive Signage
-@DOAJplus
+DOAJplus
 Censorship
 Legal Deposit
 Arduino Classes
 #FundTrove
 #critlib
+#AusLibChat
 Stain-Resistant Furniture
+Code Clubs
+Open Source
+Vendor consolidation
+Semantic markup
+Old Book Smell
+Distracted Millenials
