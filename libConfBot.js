@@ -40,10 +40,7 @@ function titleCase(string) {
 }
 
 // Set timeout to loop the whole thing every 2.1 hours
-// var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
-
-// *******************++++++++++++++++++++++++++++++++++++++++++++++++++++++++ FOR TESTING RUN EVERY 2 MINUTES
-var timerVar = setInterval (function () {writeAbstracts()}, 120000);
+var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
 
 // Run the bot when the timer expires
 function writeAbstracts() {
