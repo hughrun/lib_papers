@@ -1,4 +1,4 @@
-# lib_papers v 1.2
+# lib_papers v 1.3
 
 This is a simple Twitter bot that tweets satirical and mostly non-sensical library conference paper titles.
 
