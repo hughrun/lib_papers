@@ -209,14 +209,15 @@ function writeAbstracts() {
 	
 	function getRest(cliche) {
 
-		// randomly choose one of the top ten trending topics from Australian Twitter
-		// remember if you're testing this that you can only hit the REST API 15 times
-		// each 15 minutes (i.e. once every 60000 milliseconds)
-		var rTrend = random.integer(1,11);
-		var rT = rTrend - 1;
-		T.get('trends/place', {id:'23424748'}, function(err, data, response){
-			var trends = data[0];
-			var tTopic = trends.trends[rT].name;
+	// randomly choose one of the top 10 trending topics from Australian Twitter
+	// excluding hashtags
+	// remember if you're testing this that you can only hit the REST API 15 times
+	// each 15 minutes (i.e. once every 60000 milliseconds)
+	var rT = random.integer(0,9);
+	T.get('trends/place', {id:'23424748', exclude: 'hashtags'}, function(err, data, response){
+		if (err) throw err;
+		var trends = data[0];
+		var tTopic = trends.trends[rT].name;
 			// add a second sentence to options.txt
 			var Option2 = "How " + tTopic + " Can Transform " + cliche + ".";
 			tweetables.put(Option2);
