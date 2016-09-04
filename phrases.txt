@@ -1,66 +1,87 @@
-zero
 3D printing in libraries
-Gamification
-Linked Open Data
-RFID Self Service
-Professional Certification
-Makerspaces
-De-Professionalisation
-Second Life
-the Dominance of Google
-Wikipedia in Libraries
-#OpenAccess Publishing
-Elsevier
-@EBSCO
-@OCLC
-Chromebooks
-iPad Vending Machines
-Lego Clubs
-BIBFRAME
-Schema.org Integration
-the Future of MARC
-Inter-Library Loans
-Institutional Repositories
-Community-led librarianship
-Radical Librarians
-the Rise of eBooks
-the Serials Crisis
 Academic Presses
-Free Little Libraries
-the Card Catalogue
-the Dewey Decimal System
-Information Overload
-Librarian Stereotypes
-Roving Reference
-Design Thinking
-Three-Column Libguides
-Innovation
-Collaboration
-Embracing New Technology
-This Era of Rapid Change
-Library Closures
-Elevator Pitches
-Drone Book Delivery
 Academic Tenure for Librarians
-MOOCs
-the Internet of Things
-Tattooed Librarians
-Thinking Like a Startup
-Maker Culture
-One-Shot Instruction
+Arduino Classes
+BIBFRAME
+Censorship
+Chromebooks
+Cloud-based Library Software
+Code Clubs
+Collaboration
+Community-led librarianship
+DOAJplus
+De-Professionalisation
+Design Thinking
 Digital Natives
-Patron-Driven Acquisitions
-the MLIS
-@PLOSOne
-WiFi Speeds
+Distracted Millenials
+Drone Book Delivery
+EBSCO
+Elastic Search
+Elevator Pitches
+Elsevier
+Embracing New Technology
+Free Little Libraries
+GLAM
+Gamification
+Generous Interfaces
+Genrefication
 Getting Rid of the OPAC
+Information Overload
+Innovation
+Institutional Repositories
+Inter-Library Loans
+Legal Deposit
+Lego Clubs
+Librarian Stereotypes
+Libraries as PokeStops
+Library Closures
+Library Technicians
+Linked Open Data
+MOOCs
+Maker Culture
+Makerspaces
+Marginalia
+Middle Class White Guys Who 'Never Use the Library'
+NYPL
+Next Generation Library Systems
+OCLC
+Old Book Smell
+One-Shot Instruction
+Open Access Publishing
+Open Source
+PLOSOne
+Passive-Aggressive Signage
 Passwords on Post-It Notes
 Patron Privacy
-Passive-Aggressive Signage
-@DOAJplus
-Censorship
-Legal Deposit
-Arduino Classes
-#FundTrove
-#critlib
+Patron-Driven Acquisitions
+Pokémon
+Professional Certification
+QR Codes
+RFID Self Service
+Radical Librarians
+Roving Reference
+Second Life
+Semantic markup
+Serverless Databases
+Slack
 Stain-Resistant Furniture
+Summon
+Tattooed Librarians
+Thinking Like a Startup
+This Era of Rapid Change
+Three-Column Libguides
+Vendor consolidation
+Web Services Librarians
+WiFi Speeds
+Wikipedia in Libraries
+iPad Vending Machines
+the Card Catalogue
+the Dewey Decimal System
+the Dominance of Google
+the Future of MARC
+the Internet of Things
+the MLIS
+the Rise of eBooks
+the Serials Crisis
+the idea of Para-Professionals
+🐱 emoji ✨
