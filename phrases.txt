@@ -1,7 +1,26 @@
 3D printing in libraries
+<<<<<<< HEAD
 Academic Presses
 Academic Tenure for Librarians
 Arduino Classes
+=======
+Gamification
+Linked Open Data
+RFID Self Service
+Professional Certification
+Makerspaces
+De-Professionalisation
+Second Life
+the Dominance of Google
+Wikipedia in Libraries
+#OpenAccess Publishing
+Elsevier
+EBSCO
+OCLC
+Chromebooks
+iPad Vending Machines
+Lego Clubs
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 BIBFRAME
 Censorship
 Chromebooks
@@ -47,6 +66,7 @@ Next Generation Library Systems
 OCLC
 Old Book Smell
 One-Shot Instruction
+<<<<<<< HEAD
 Open Access Publishing
 Open Source
 PLOSOne
@@ -85,3 +105,28 @@ the Rise of eBooks
 the Serials Crisis
 the idea of Para-Professionals
 🐱 emoji ✨
+=======
+Digital Natives
+Patron-Driven Acquisitions
+the MLIS
+PLOSOne
+WiFi Speeds
+Getting Rid of the OPAC
+Passwords on Post-It Notes
+Patron Privacy
+Passive-Aggressive Signage
+DOAJplus
+Censorship
+Legal Deposit
+Arduino Classes
+#FundTrove
+#critlib
+#AusLibChat
+Stain-Resistant Furniture
+Code Clubs
+Open Source
+Vendor consolidation
+Semantic markup
+Old Book Smell
+Distracted Millenials
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a

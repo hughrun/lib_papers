@@ -1,5 +1,9 @@
  // #####################################
+<<<<<<< HEAD
 // Library Conference Papers Bot v 1.5 ##
+=======
+// Library Conference Papers Bot v 1.3 ##
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 // ######################################
 
 // Create a simple server to keep the bot running
@@ -30,6 +34,7 @@ var T = new Twit({
 
 // title case - capitalise each word in the string
 function titleCase(string) {
+<<<<<<< HEAD
 		var phrase = "";
 		var arr = string.split(" ");
 		for (i=0; i < arr.length; i++) {
@@ -48,6 +53,16 @@ function titleCase(string) {
 			phrase += (" " + newStr);
 		}
 	    return phrase.trim();
+=======
+	var phrase = "";
+	var arr = string.split(" ");
+	for (i=0; i < arr.length; i++) {
+		str = arr[i];
+		newStr = str.charAt(0).toUpperCase() + str.slice(1);
+		phrase += (" " + newStr);
+	}
+    return phrase.trim();
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 };
 
 // clean up the words we get out of wordpos
@@ -61,7 +76,10 @@ var cleanUp = (function(){
 		},
 		abbr: function(word){
 			// capitalise abbreviations and three letter acronyms
+<<<<<<< HEAD
 			// unfortunately this also capitalises the occassional three letter word
+=======
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 			word = word.trim();
 			if (word.length === 3 || /\w\./ig.test(word)) {
 				word = word.toUpperCase();
@@ -95,6 +113,7 @@ var addSentence = (function(){
 		}
 	}
 })();
+<<<<<<< HEAD
 
 // We collect possible phrases and send the tweet here when called
 var tweetables = (function(){
@@ -133,6 +152,40 @@ var tweetables = (function(){
 	}
 })();
 
+=======
+
+// We collect possible phrases and send the tweet here when called
+var tweetables = (function(){
+	var array = [];
+	function addOption(option){
+		array.push(option);
+	}
+	return {
+		put: function(option){
+			addOption(option)
+		},
+		show: function(){
+			// get the value of the array (used for testing).
+			return array;
+		},
+		choose: function(){
+			//tweet the title!
+			T.post('statuses/update', {status: random.pick(array)}, function(err, data, response){
+				if (err) {
+					console.log(err);
+				}
+				console.log(data.text);
+			})
+			// clear the array for the next go-around			
+			array = [];
+			// record when it looped to help with troubleshooting if needed
+			var loopDate = new Date();
+			console.log('Looped at ' + loopDate);
+		}
+	}
+})();
+
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 // Set timeout to loop every 2.1 hours
 var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
 
@@ -179,6 +232,7 @@ function writeAbstracts() {
 			var hasColon = t.includes(":");
 			var colon = t.lastIndexOf(":");
 			var sentence = t.slice(0, colon);
+<<<<<<< HEAD
 			var joiner = [': What it Means for ',': Ramifications for ',': How it Could Revolutionise ',': How it Could Influence ',' - Why This Could be Bigger Than ','? Not Without '];
 
 		    // get the bit AFTER the break word
@@ -207,6 +261,12 @@ function writeAbstracts() {
 			// if there is a colon, break the headline there and use the bit before the colon
 			// exclude anything that's simply 'Exclusive:'
 			if (hasColon && (sentence !== 'Exclusive')) {
+=======
+			var joiner = [': what it means for ',': ramifications for ',': how it could revolutionise ',': how it could influence '];
+
+			// if there is a colon, break the headline there and use the bit before the colon
+			if (hasColon) {
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 				var mySentence = (titleCase(sentence) + random.pick(joiner) + cliche + '.');
 				 addSentence.into(mySentence);
 			} else {
@@ -214,6 +274,7 @@ function writeAbstracts() {
 					    var taggedWord = taggedWords[i];
 					    var word = taggedWord[0];
 					    var tag = taggedWord[1];
+<<<<<<< HEAD
 					    // check for useful break words (see https://www.npmjs.com/package/pos for more info on tags)
 					    if (tag === "IN") {
 					    	makePhrase(word);
@@ -222,6 +283,31 @@ function writeAbstracts() {
 					   	} else if (tag === "PDT") {
 					    	getPhrase(word);
 					    }
+=======
+					    // check for useful break words (see pos for more info)
+					    if (tag === "IN") {
+					    	makePhrase(word);
+					    } else if (tag === "TO") {
+					 	   getPhrase(word);   	
+					    } else if (tag === "PDT") {
+					    	getPhrase(word);
+					    }
+
+					    // get the bit AFTER the break word
+						function makePhrase(word) {
+							var position = t.indexOf(word) + word.length + 1;
+							var finalSentence = t.slice(position);
+							var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
+							addSentence.into(mySentence);
+						};
+						// get the bit BEFORE the break word
+						function getPhrase(word) {
+							var position = t.indexOf(word);
+							var finalSentence = t.slice(0,position);
+							var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
+							addSentence.into(mySentence);
+						};
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 					}
 				}
 			}	
@@ -235,6 +321,7 @@ function writeAbstracts() {
 	
 	function getRest(cliche) {
 
+<<<<<<< HEAD
 	// randomly choose one of the top trending topics from Australian Twitter
 	// excluding hashtags
 	// remember if you're testing this that you can only hit the REST API 15 times
@@ -248,6 +335,19 @@ function writeAbstracts() {
 		var tTopic = trends[rT].name;
 			// add a second sentence to options.txt
 			var Option2 = "How " + titleCase(tTopic) + " Can Transform " + cliche + ".";
+=======
+	// randomly choose one of the top 10 trending topics from Australian Twitter
+	// excluding hashtags
+	// remember if you're testing this that you can only hit the REST API 15 times
+	// each 15 minutes (i.e. once every 60000 milliseconds)
+	var rT = random.integer(0,9);
+	T.get('trends/place', {id:'23424748', exclude: 'hashtags'}, function(err, data, response){
+		if (err) throw err;
+		var trends = data[0];
+		var tTopic = trends.trends[rT].name;
+			// add a second sentence to options.txt
+			var Option2 = "How " + tTopic + " Can Transform " + cliche + ".";
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 			tweetables.put(Option2);
 		});
 
@@ -261,10 +361,17 @@ function writeAbstracts() {
 			var clean2 = cleanUp.spaceCap(noun2);
 
 			// append the final two sentences to options.txt
+<<<<<<< HEAD
 			var pairs = ["Why " + titleCase(clean1) + " Could be the " + titleCase(clean2) + " of Libraries.", "How Libraries are Bringing " + clean1 + " and " + titleCase(clean2) + " Together at Last.", "Is " + titleCase(clean1) + " the Next " + titleCase(clean2) + " of Libraries?"];
 			var Option3 = random.pick(pairs);
 			tweetables.put(Option3);		
 			var futurePast = ["Is " + titleCase(clean1) + " the Future of Libraries?","Are Libraries the Original " + titleCase(clean1) + "?", "Has " + titleCase(clean1) + " Killed Libraries?","Why Putting " + titleCase(clean1) + " in Libraries Isn't a Crazy Idea.",titleCase(clean2) + " Could be a Game Changer for Libraries.", "What This Year's Movers and Shakers are doing with " + titleCase(clean2) + ".", "Why Libraries Should be Lending " + titleCase(clean2) + "."];
+=======
+			var pairs = ["Why " + clean1 + " Could be the " + clean2 + " of Libraries.", "How Libraries are Bringing " + clean1 + " and " + clean2 + " Together at Last."];
+			var Option3 = random.pick(pairs);
+			tweetables.put(Option3);		
+			var futurePast = ["Is " + clean1 + " the Future of Libraries?","Are Libraries the Original " + clean1 + "?", "Has " + clean1 + " Killed Libraries?"];
+>>>>>>> e2af6696055200acba353ca224892a2fff43f68a
 			var Option4 = random.pick(futurePast);
 			tweetables.put(Option4);
 		});
