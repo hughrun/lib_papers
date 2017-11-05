@@ -43,7 +43,7 @@ function titleCase(string) {
 			} else if (first == first.toUpperCase()){
 				newStr = str;
 			} else {
-				newStr = str.charAt(0).toUpperCase() + str.slice(1);	
+				newStr = str.charAt(0).toUpperCase() + str.slice(1);
 			}
 			phrase += (" " + newStr);
 		}
@@ -55,9 +55,16 @@ var cleanUp = (function(){
 	var phrase = "";
 	return {
 		spaceCap: function(x){
-			// replace underscores with spaces and titlecase the result
-			var word = titleCase(x.replace(/_/g, " "));
-			return cleanUp.abbr(titleCase(word));
+      try {
+        // replace underscores with spaces and titlecase the result
+  			var word = titleCase(x.replace(/_/g, " "));
+  			return cleanUp.abbr(titleCase(word));
+      } catch(e) {
+        console.error(`************ \n Caught error at line 62: \n ${e}`)
+        // on error restart loop
+        startList(getNews, getRest)
+      }
+
 		},
 		abbr: function(word){
 			// capitalise abbreviations and three letter acronyms
@@ -124,7 +131,7 @@ var tweetables = (function(){
 					console.log(data.text);
 				}
 			});
-			// clear the array for the next go-around			
+			// clear the array for the next go-around
 			array = [];
 			// record when it looped to help with troubleshooting if needed
 			var loopDate = new Date();
@@ -150,7 +157,7 @@ function writeAbstracts() {
 
 		// deal with any errors in FeedParser
 		req.on('error', function (error) {
-		  console.error(error); 
+		  console.error(error);
 		});
 
 		req.on('response', function (res) {
@@ -162,14 +169,14 @@ function writeAbstracts() {
 
 		// deal with any errors in feedparser
 		feedparser.on('error', function(error) {
-		  console.error(error); 
+		  console.error(error);
 		});
 
 		feedparser.on('readable', function() {
-		  // here we go... 
+		  // here we go...
 		  var stream = this
 		      , meta = this.meta
-		      , item;	
+		      , item;
 
 		  while (item = stream.read()) {
 			t = item.title;
@@ -224,15 +231,15 @@ function writeAbstracts() {
 					    }
 					}
 				}
-			}	
+			}
 		});
 
 		feedparser.on('end', () => {
 			// Once all the headlines have been checked, choose one of the sentences in the array and send off to the tweetables array
   			addSentence.choose();
-		});			
+		});
 	};
-	
+
 	function getRest(cliche) {
 
 	// randomly choose one of the top trending topics from Australian Twitter
@@ -263,20 +270,20 @@ function writeAbstracts() {
 			// append the final two sentences to options.txt
 			var pairs = ["Why " + titleCase(clean1) + " Could be the " + titleCase(clean2) + " of Libraries.", "How Libraries are Bringing " + clean1 + " and " + titleCase(clean2) + " Together at Last.", "Is " + titleCase(clean1) + " the Next " + titleCase(clean2) + " of Libraries?"];
 			var Option3 = random.pick(pairs);
-			tweetables.put(Option3);		
+			tweetables.put(Option3);
 			var futurePast = ["Is " + titleCase(clean1) + " the Future of Libraries?","Are Libraries the Original " + titleCase(clean1) + "?", "Has " + titleCase(clean1) + " Killed Libraries?","Why Putting " + titleCase(clean1) + " in Libraries Isn't a Crazy Idea.",titleCase(clean2) + " Could be a Game Changer for Libraries.", "What This Year's Movers and Shakers are doing with " + titleCase(clean2) + ".", "Why Libraries Should be Lending " + titleCase(clean2) + "."];
 			var Option4 = random.pick(futurePast);
 			tweetables.put(Option4);
 		});
 		// now trigger the tweet
-		tweetables.choose();		
+		tweetables.choose();
 	};
 
 	function startList(news, rest) {
 		// use the random value to pick a line from the phrases.txt file.
 		var phrases = fs.readFileSync('phrases.txt').toString().split('\n');
 		var cliche = random.pick(phrases)
-		// get the Reuters headlines		
+		// get the Reuters headlines
 		news(cliche);
 		// now get everything else
 		rest(cliche);
