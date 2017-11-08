@@ -1,17 +1,20 @@
 3D printing in libraries
 Academic Presses
 Academic Tenure for Librarians
+ALIA
 Arduino Classes
 BIBFRAME
 Censorship
 Chromebooks
 Cloud-based Library Software
 Code Clubs
+Code4Lib
 Collaboration
 Community-led librarianship
 DOAJplus
 De-Professionalisation
 Design Thinking
+Digital Humanities
 Digital Natives
 Distracted Millenials
 Drone Book Delivery
@@ -20,18 +23,26 @@ Elastic Search
 Elevator Pitches
 Elsevier
 Embracing New Technology
+FOLIO
 Free Little Libraries
 GLAM
 Gamification
 Generous Interfaces
 Genrefication
 Getting Rid of the OPAC
+The Glass Escalator
+IFLA
+Information Commons
+Information Literacy
 Information Overload
 Innovation
 Institutional Repositories
 Inter-Library Loans
+Intersectional Librarianship
+Koha ILS
 Legal Deposit
 Lego Clubs
+LIANZA
 Librarian Stereotypes
 Libraries as PokeStops
 Library Closures
@@ -40,6 +51,7 @@ Linked Open Data
 MOOCs
 Maker Culture
 Makerspaces
+Male Librarians Still Getting Paid More Then Women
 Marginalia
 Middle Class White Guys Who 'Never Use the Library'
 NYPL
@@ -57,6 +69,7 @@ Patron-Driven Acquisitions
 Pokémon
 Professional Certification
 QR Codes
+RDA
 RFID Self Service
 Radical Librarians
 Roving Reference

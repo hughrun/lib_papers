@@ -1,8 +1,11 @@
-# lib_papers v 1.5
+# lib_papers
 
 This is a simple Twitter bot that tweets satirical and mostly non-sensical library conference paper titles.
 
 The main file is fairly heavily commented so you should be able to follow along by reading the code. It uses a pre-populated list of cliche phrases, the top ten Twitter trending terms in Australia, the Reuters tech news RSS feed, and some random nouns, and mixes them up to create new conference paper topics. It them chooses one of four possibilities at random and tweets it. Every 2.1 hours it repeats the process.
+
+## Version 2.0
+Refactored to remove pointless self-invoking functions and server, added a bit more bug tracking, and generally cleaned up code that wasn't doing much. Minor title-casing and spacing fixes.
 
 ## Version 1.5
 Fixed bug with Twitter trends, added more paper title structures, fixed some title-casing issues.

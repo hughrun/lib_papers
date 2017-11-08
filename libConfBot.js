@@ -1,16 +1,9 @@
  // #####################################
-// Library Conference Papers Bot v 1.5 ##
+// Library Conference Papers Bot v 2.0 ##
+// #		 Copyright Hugh Rundle 				 ##
 // ######################################
 
-// Create a simple server to keep the bot running
-var http = require('http');
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Library Conference Proposals Bot\n');
-}).listen(8080);
-
 // REQUIRE packages
-require('dotenv').load();
 var random = require("random-js")();
 var fs =require("fs");
 var request = require("request");
@@ -20,6 +13,7 @@ var pos = require('pos');
 var Twit = require('twit');
 // initiate wordpos
 wordpos = new WordPOS();
+
 //initiate twit
 var T = new Twit({
 	consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -28,8 +22,15 @@ var T = new Twit({
 	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-// title case - capitalise each word in the string
-function titleCase(string) {
+// arrays need to be globals so we can access and retain them.
+var tweetArray = [];
+var sentenceArray = [];
+
+// Run the bot when the interval expires
+function writeAbstracts() {
+
+	// title case - capitalise each word in the string
+	const titleCase = function (string) {
 		var phrase = "";
 		var arr = string.split(" ");
 		for (i=0; i < arr.length; i++) {
@@ -37,114 +38,107 @@ function titleCase(string) {
 			var first = str[0];
 			// if the word includes a quote mark at the start, capitalise the next character instead
 			if (first === '"' || first === "'") {
-				newStr = str.charAt(0) + str.charAt(1).toUpperCase() + str.slice(2);
+				try {
+					newStr = str.charAt(0) + str.charAt(1).toUpperCase() + str.slice(2);
+				} catch (err) {
+					console.log(`error line 47 \n ${err}`)
+				}
+
 			// if it's already capitalised, just send it back - this avoids dropping the case on an acronym
 			// note this will also mean we ignore numbers
-			} else if (first == first.toUpperCase()){
+		} else if (first && first == first.toUpperCase()){
 				newStr = str;
 			} else {
-				newStr = str.charAt(0).toUpperCase() + str.slice(1);
+				try {
+					newStr = str.charAt(0).toUpperCase() + str.slice(1);
+				} catch (err) {
+					console.log(`error line 58 \n ${err}`)
+				}
 			}
 			phrase += (" " + newStr);
 		}
 	    return phrase.trim();
-};
+	};
 
 // clean up the words we get out of wordpos
-var cleanUp = (function(){
-	var phrase = "";
-	return {
-		spaceCap: function(x){
-      try {
-        // replace underscores with spaces and titlecase the result
-  			var word = titleCase(x.replace(/_/g, " "));
-  			return cleanUp.abbr(titleCase(word));
-      } catch(e) {
-        console.error(`************ \n Caught error at line 62: \n ${e}`)
-        // on error restart loop
-        startList(getNews, getRest)
-      }
-
-		},
-		abbr: function(word){
-			// capitalise abbreviations and three letter acronyms
-			// unfortunately this also capitalises the occassional three letter word
-			word = word.trim();
-			if (word.length === 3 || /\w\./ig.test(word)) {
+const cleanUp = {
+	phrase: "",
+	spaceCap(x){
+    // replace underscores with spaces and titlecase the result
+		var word = titleCase(x.replace(/_/g, " "));
+		return cleanUp.abbr(titleCase(word));
+  },
+	abbr(word){
+		// capitalise abbreviations and three letter acronyms
+		// unfortunately this also capitalises the occassional three letter word
+		word = word.trim();
+		if (word.length === 3 || /\w\./ig.test(word)) {
+			try {
 				word = word.toUpperCase();
+			} catch (err) {
+				console.log(`error line 83 \n ${err}`)
 			}
-			phrase = "";
-			return word;
-		}
-	}
-})();
 
-// organise sentences from the Reuters headlines
-var addSentence = (function(){
-	var array = [];
-	function addItem(title){
-		array.push(title)
-	}
-	return {
-		// push an item into the array
-		into: function(title){
-			addItem(title);
-		},
-		// get the value of the array (used for testing).
-		value: function(){
-			return array;
-		},
-		// pick a random sentence from the array and add to the tweetables list
-		choose: function(){
-			var sentence = random.pick(array);
-			array = [];
-			return tweetables.put(sentence);
 		}
+		cleanUp.phrase = "";
+		return word;
 	}
-})();
+};
 
 // We collect possible phrases and send the tweet here when called
-var tweetables = (function(){
-	var array = [];
-	function addOption(option){
-		array.push(option);
-	}
-	return {
-		put: function(option){
-			addOption(option)
+const tweetables = {
+	addOption(option){
+	 tweetArray.push(option);
+	},
+		put(option){
+		 tweetables.addOption(option)
 		},
-		show: function(){
+		show(){
 			// get the value of the array (used for testing).
-			return array;
+		 return tweetArray;
 		},
-		choose: function(){
+		choose(){
 			//tweet the title!
-			T.post('statuses/update', {status: random.pick(array)}, function(err, data, response){
+			T.post('statuses/update', {status: random.pick(tweetArray)}, function(err, data, response){
 				if (err) {
 					if (err.code == '170') {
-						writeAbstracts();
-						console.log("Restarted loop due to error 170.")
+						console.log("error 170 no status, tweetArray was probably empty.")
 					} else {
-						console.log(err);
+						console.log(`error at line 100 \n ${err}`);
 					}
 				} else {
 					console.log(data.text);
 				}
 			});
-			// clear the array for the next go-around
-			array = [];
 			// record when it looped to help with troubleshooting if needed
 			var loopDate = new Date();
 			console.log('Looped at ' + loopDate);
+			// clear arrays
+			tweetArray.length = 0;
+			sentenceArray.length = 0;
 		}
-	}
-})();
+	};
 
-// Set timeout to loop every 2.1 hours
-var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
-
-// Run the bot when the interval expires
-function writeAbstracts() {
+	// organise sentences from the Reuters headlines
+	const addSentence = {
+		// add to the sentence array
+		addItem(title){
+			sentenceArray.push(title)
+		},
+		// push an item into the array
+		into(title){
+			addSentence.addItem(title);
+		},
+		// get the value of the array (used for testing).
+		value(){
+			return sentenceArray;
+		},
+		// pick a random sentence from the array and add to the tweetables list
+		choose(){
+			var sentence = random.pick(sentenceArray);
+			return tweetables.put(sentence);
+		}
+	};
 
 	function getNews(cliche){
 		// set a Date variable for yesterday.
@@ -157,7 +151,7 @@ function writeAbstracts() {
 
 		// deal with any errors in FeedParser
 		req.on('error', function (error) {
-		  console.error(error);
+		  console.error(`error at line 148 \n ${error}`);
 		});
 
 		req.on('response', function (res) {
@@ -195,18 +189,16 @@ function writeAbstracts() {
 				if (random.bool()){
 					var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
 				} else {
-					var mySentence = ('What Does "' + titleCase(finalSentence) + '" Mean for ' + cliche + '?');
+					var mySentence = (`What Does ${titleCase(finalSentence)} Mean for ${cliche}?`);
 				}
 				addSentence.into(mySentence);
 			};
 			// get the bit BEFORE the break word
 			function getPhrase(word) {
-				var position = t.indexOf(word);
-				var finalSentence = t.slice(0,position);
 				if (random.bool()){
-					var mySentence = (titleCase(finalSentence) + random.pick(joiner) + cliche + '.');
+					var mySentence = (titleCase(t) + random.pick(joiner) + cliche + '.');
 				} else {
-					var mySentence = (titleCase(finalSentence) + ' But Librarians Are Still Obsessed with ' + cliche + '.');
+					var mySentence = (`${titleCase(t)} - But Librarians Want ${cliche}.`);
 				}
 				addSentence.into(mySentence);
 			};
@@ -223,12 +215,19 @@ function writeAbstracts() {
 					    var tag = taggedWord[1];
 					    // check for useful break words (see https://www.npmjs.com/package/pos for more info on tags)
 					    if (tag === "IN") {
+								// preposition: of, in, by
 					    	makePhrase(word);
+								// coord junction: and, but, or
 					   	} else if (tag === "CC"){
 					   		makePhrase(word);
+								// predeterminer: all, both
 					   	} else if (tag === "PDT") {
+								// this never seems to trigger?
 					    	getPhrase(word);
-					    }
+					    } else {
+                // none of these came up, use something else
+								getPhrase(random.pick(["some", "many", "but"]))
+              }
 					}
 				}
 			}
@@ -254,7 +253,7 @@ function writeAbstracts() {
 		var rT = random.integer(0,trendsTotal);
 		var tTopic = trends[rT].name;
 			// add a second sentence to options.txt
-			var Option2 = "How " + titleCase(tTopic) + " Can Transform " + cliche + ".";
+			var Option2 = `How ${titleCase(tTopic)} Can Transform ${cliche}.`;
 			tweetables.put(Option2);
 		});
 
@@ -268,10 +267,10 @@ function writeAbstracts() {
 			var clean2 = cleanUp.spaceCap(noun2);
 
 			// append the final two sentences to options.txt
-			var pairs = ["Why " + titleCase(clean1) + " Could be the " + titleCase(clean2) + " of Libraries.", "How Libraries are Bringing " + clean1 + " and " + titleCase(clean2) + " Together at Last.", "Is " + titleCase(clean1) + " the Next " + titleCase(clean2) + " of Libraries?"];
+			var pairs = [`Why ${titleCase(clean1)} Could be the ${titleCase(clean2)} of Libraries.`, `How Libraries are Bringing ${clean1} and ${titleCase(clean2)} Together at Last.`, `Is ${titleCase(clean1)} the Next ${titleCase(clean2)} of Libraries?`];
 			var Option3 = random.pick(pairs);
 			tweetables.put(Option3);
-			var futurePast = ["Is " + titleCase(clean1) + " the Future of Libraries?","Are Libraries the Original " + titleCase(clean1) + "?", "Has " + titleCase(clean1) + " Killed Libraries?","Why Putting " + titleCase(clean1) + " in Libraries Isn't a Crazy Idea.",titleCase(clean2) + " Could be a Game Changer for Libraries.", "What This Year's Movers and Shakers are doing with " + titleCase(clean2) + ".", "Why Libraries Should be Lending " + titleCase(clean2) + "."];
+			var futurePast = [`Is ${titleCase(clean1)} the Future of Libraries?`, `Are Libraries the Original ${titleCase(clean1)}?`, `Has ${titleCase(clean1)} Killed Libraries?`, `Why Putting ${titleCase(clean1)} in Libraries Isn't a Crazy Idea.`,`${titleCase(clean2)} Could be a Game Changer for Libraries.`, `What This Year's Movers and Shakers Are Doing With ${titleCase(clean2)}.`, `Why Libraries Should be Lending ${titleCase(clean2)}.`];
 			var Option4 = random.pick(futurePast);
 			tweetables.put(Option4);
 		});
@@ -288,8 +287,10 @@ function writeAbstracts() {
 		// now get everything else
 		rest(cliche);
 	}
-
 	// GO!
 	// We do it like this to ensure that the Reuters feed is dealt with before anthing else runs
 	startList(getNews, getRest)
 };
+
+// Set timeout to loop every 2.1 hours
+var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
