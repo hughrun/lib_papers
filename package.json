@@ -1,0 +1,27 @@
+{
+  "name": "lib_papers",
+  "version": "2.0.0",
+  "description": "A bot for Twitter and Mastodon that creates fake Library Science conference talk titles",
+  "main": "libConfBot.js",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hughrun/lib_papers.git"
+  },
+  "keywords": [
+    "twitter",
+    "mastodon"
+  ],
+  "author": "Hugh Rundle <npm@hughr.me> (https://www.hughrundle.net/)",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/hughrun/lib_papers/issues"
+  },
+  "homepage": "https://github.com/hughrun/lib_papers#readme"
+}
