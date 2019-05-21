@@ -4,18 +4,18 @@
 // ######################################
 
 // REQUIRE packages
-var random = require("random-js")();
-var fs =require("fs");
-var request = require("request");
-var FeedParser = require ("feedparser");
-var WordPOS = require('wordpos');
-var pos = require('pos');
-var Twit = require('twit');
+const random = require("random-js")()
+const phrases = require("phrases.js") // phrases now a module rather than text file
+const request = require("request")
+const FeedParser = require ("feedparser")
+const WordPOS = require('wordpos')
+const pos = require('pos')
+const Twit = require('twit')
 // initiate wordpos
 wordpos = new WordPOS();
 
 //initiate twit
-var T = new Twit({
+const T = new Twit({
 	consumer_key: process.env.TWITTER_CONSUMER_KEY,
 	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
 	access_token: process.env.TWITTER_ACCESS_TOKEN,
@@ -23,8 +23,8 @@ var T = new Twit({
 });
 
 // arrays need to be globals so we can access and retain them.
-var tweetArray = [];
-var sentenceArray = [];
+const tweetArray = [];
+const sentenceArray = [];
 
 // Run the bot when the interval expires
 function writeAbstracts() {
@@ -119,7 +119,8 @@ const tweetables = {
 		}
 	};
 
-	// organise sentences from the Reuters headlines
+  // organise sentences from the Reuters headlines
+  // TODO: this is a mess, restructure the whole thing
 	const addSentence = {
 		// add to the sentence array
 		addItem(title){
@@ -180,7 +181,15 @@ const tweetables = {
 			var hasColon = t.includes(":");
 			var colon = t.lastIndexOf(":");
 			var sentence = t.slice(0, colon);
-			var joiner = [': What it Means for ',': Ramifications for ',': How it Could Revolutionise ',': How it Could Influence ',' - Why This Could be Bigger Than ','? Not Without '];
+      var joiner =
+      [
+        ': What it Means for ',
+        ': Ramifications for ',
+        ': How it Could Revolutionise ',
+        ': How it Could Influence ',
+        ' - Why This Could be Bigger Than ',
+        '? Not Without '
+      ]
 
 		    // get the bit AFTER the break word
 			function makePhrase(word) {
@@ -196,7 +205,7 @@ const tweetables = {
 			// get the bit BEFORE the break word
 			function getPhrase(word) {
 				if (random.bool()){
-					var mySentence = (titleCase(t) + random.pick(joiner) + cliche + '.');
+					var mySentence = (`${titleCase(t)} ${random.pick(joiner)} ${cliche}.`);
 				} else {
 					var mySentence = (`${titleCase(t)} - But Librarians Want ${cliche}.`);
 				}
@@ -206,14 +215,15 @@ const tweetables = {
 			// if there is a colon, break the headline there and use the bit before the colon
 			// exclude anything that's simply 'Exclusive:'
 			if (hasColon && (sentence !== 'Exclusive')) {
-				var mySentence = (titleCase(sentence) + random.pick(joiner) + cliche + '.');
+				var mySentence = `${titleCase(sentence)} ${random.pick(joiner)} ${cliche}.`
 				 addSentence.into(mySentence);
 			} else {
 		    		for (i in taggedWords) {
 					    var taggedWord = taggedWords[i];
 					    var word = taggedWord[0];
 					    var tag = taggedWord[1];
-					    // check for useful break words (see https://www.npmjs.com/package/pos for more info on tags)
+              // check for useful break words
+              // (see https://www.npmjs.com/package/pos for more info on tags)
 					    if (tag === "IN") {
 								// preposition: of, in, by
 					    	makePhrase(word);
@@ -234,7 +244,8 @@ const tweetables = {
 		});
 
 		feedparser.on('end', () => {
-			// Once all the headlines have been checked, choose one of the sentences in the array and send off to the tweetables array
+      // Once all the headlines have been checked, choose one of the sentences in the array
+      // and send off to the tweetables array
   			addSentence.choose();
 		});
 	};
@@ -248,7 +259,8 @@ const tweetables = {
 	T.get('trends/place', {id:'23424748', exclude: 'hashtags'}, function(err, data, response){
 		if (err) throw err;
 		var trends = data[0].trends;
-		// The API usually returns the top 50 trends, but we don't know how many aren't hashtags, so find out here.
+    // The API usually returns the top 50 trends,
+    // but we don't know how many aren't hashtags, so find out here.
 		var trendsTotal = trends.length - 1;
 		var rT = random.integer(0,trendsTotal);
 		var tTopic = trends[rT].name;
@@ -267,10 +279,25 @@ const tweetables = {
 			var clean2 = cleanUp.spaceCap(noun2);
 
 			// append the final two sentences to options.txt
-			var pairs = [`Why ${titleCase(clean1)} Could be the ${titleCase(clean2)} of Libraries.`, `How Libraries are Bringing ${clean1} and ${titleCase(clean2)} Together at Last.`, `Is ${titleCase(clean1)} the Next ${titleCase(clean2)} of Libraries?`];
+      var pairs =
+      [
+        `Why ${titleCase(clean1)} Could be the ${titleCase(clean2)} of Libraries.`,
+        `How Libraries are Bringing ${clean1} and ${titleCase(clean2)} Together at Last.`,
+        `Is ${titleCase(clean1)} the Next ${titleCase(clean2)} of Libraries?`
+      ]
+
 			var Option3 = random.pick(pairs);
 			tweetables.put(Option3);
-			var futurePast = [`Is ${titleCase(clean1)} the Future of Libraries?`, `Are Libraries the Original ${titleCase(clean1)}?`, `Has ${titleCase(clean1)} Killed Libraries?`, `Why Putting ${titleCase(clean1)} in Libraries Isn't a Crazy Idea.`,`${titleCase(clean2)} Could be a Game Changer for Libraries.`, `What This Year's Movers and Shakers Are Doing With ${titleCase(clean2)}.`, `Why Libraries Should be Lending ${titleCase(clean2)}.`];
+      var futurePast =
+      [
+        `Is ${titleCase(clean1)} the Future of Libraries?`,
+        `Are Libraries the Original ${titleCase(clean1)}?`,
+        `Has ${titleCase(clean1)} Killed Libraries?`,
+        `Why Putting ${titleCase(clean1)} in Libraries Isn't a Crazy Idea.`,
+        `${titleCase(clean2)} Could be a Game Changer for Libraries.`,
+        `What This Year's Movers and Shakers Are Doing With ${titleCase(clean2)}.`,
+        `Why Libraries Should be Lending ${titleCase(clean2)}.`
+      ]
 			var Option4 = random.pick(futurePast);
 			tweetables.put(Option4);
 		});
@@ -279,8 +306,7 @@ const tweetables = {
 	};
 
 	function startList(news, rest) {
-		// use the random value to pick a line from the phrases.txt file.
-		var phrases = fs.readFileSync('phrases.txt').toString().split('\n');
+		// use the random value to pick a phrase
 		var cliche = random.pick(phrases)
 		// get the Reuters headlines
 		news(cliche);
@@ -293,4 +319,4 @@ const tweetables = {
 };
 
 // Set timeout to loop every 2.1 hours
-var timerVar = setInterval (function () {writeAbstracts()}, 7.56e+6);
+const timer = setInterval (function () {writeAbstracts()}, 7.56e+6);
