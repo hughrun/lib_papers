@@ -1,0 +1,8 @@
+{
+  "TWITTER_CONSUMER_KEY" : "key",
+  "TWITTER_CONSUMER_SECRET" : "secret",
+  "TWITTER_ACCESS_TOKEN" : "token",
+  "TWITTER_ACCESS_TOKEN_SECRET" : "token secret",
+  "MASTO_TOKEN" : "token",
+  "MASTO_URL" : "https://ausglam.space"
+}
