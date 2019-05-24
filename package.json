@@ -1,13 +1,18 @@
 {
   "name": "lib_papers",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A bot for Twitter and Mastodon that creates fake Library Science conference talk titles",
-  "main": "libConfBot.js",
+  "main": "lib_papers.js",
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "mastodon": "^1.2.2",
+    "random-js": "^2.0.0",
+    "twit": "^2.2.11",
+    "wordpos": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node lib_papers.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

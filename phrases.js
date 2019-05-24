@@ -1,5 +1,40 @@
-phrases = [
-  "3D printers",
+const actions =
+[
+  'Lending',
+  'Cataloguing',
+  'Standardising',
+  'Co-Ordinating',
+  'Embracing',
+  'Revolutionising',
+  'Saving',
+  'Restoring',
+  'Preserving',
+  'Reading',
+  'Weeding',
+  'Shelving'
+]
+
+const adverbs =
+[
+  'How',
+  'Where',
+  'Why'
+]
+
+const changeWords =
+[
+  'Improve',
+  'Revolutionise',
+  'Rationalise',
+  'Re-Imagine',
+  'Rethink',
+  'Embrace',
+  'Catalogue',
+  'Standardise'
+]
+
+const cliches = [
+  "3D Printers",
   "Academic Presses",
   "Artificial Intelligence",
   "Authority Files",
@@ -10,12 +45,13 @@ phrases = [
   "BIBFRAME",
   "Blockchain",
   "Card Catalogues",
+  "Cardigans",
   "Censorship",
   "The Cloud",
   "Code Clubs",
   "Code4Lib",
-  "Co-design",
-  "Community-led librarianship",
+  "Co-Design",
+  "Community-Led Librarianship",
   "De-Professionalisation",
   "Design Thinking",
   "the Dewey Decimal System",
@@ -26,9 +62,10 @@ phrases = [
   "Diversity Initiatives",
   "DOAJ",
   "Document Delivery",
-  "'Doing more with less'",
+  "'Doing More With Less'",
   "Drag Queen Storytime",
   "Drone Book Delivery",
+  "Dublin Core",
   "Elastic Search",
   "Elevator Pitches",
   "Elsevier",
@@ -37,7 +74,8 @@ phrases = [
   "Gamification",
   "Generous Interfaces",
   "Genrefication",
-  "Getting Rid of the OPAC",
+  "Getting Rid Of The OPAC",
+  "Green Open Access",
   "The Glass Escalator",
   "IFLA",
   "Information Literacy",
@@ -60,9 +98,10 @@ phrases = [
   "Makerspaces",
   "Marginalia",
   "Middle Class White Guys Who 'Never Use the Library'",
+  "Minecraft",
   "Nap Pods",
   "National Bibliographic Databases",
-  "Nazis in the Meeting Room",
+  "Nazis In The Meeting Room",
   "OCLC",
   "OERs",
   "Old Book Smell",
@@ -72,11 +111,12 @@ phrases = [
   "Plan S",
   'PLOSOne',
   "Passive-Aggressive Signage",
-  "Passwords on Post-It Notes",
+  "Passwords On Post-It Notes",
   "Patron Privacy",
   "Patron-Driven Acquisitions",
   "Professional Certification",
   "Radical Librarians",
+  "Restructures",
   "Research Offices",
   "SciHub",
   "Semantic Markup",
@@ -84,9 +124,45 @@ phrases = [
   "Student Success Metrics",
   "Summon",
   "Tenure",
-  "'Thinking Like a Startup'",
+  "'Thinking Like A Startup'",
   "Vendor Consolidation",
   "Wikipedia"
 ]
 
-module.exports = phrases
+const users =
+[
+  'Seniors',
+  'Baby Boomers',
+  'Academics',
+  'Veterans',
+  'Funders',
+  'Donors',
+  'Councillors',
+  'Middle-Aged Men',
+  'Dog People',
+  'Cat Lovers',
+  'Authors',
+  'Readers',
+  'Men',
+  'Women',
+  'Enbies',
+  'Parents',
+  'Mothers',
+  'Fathers',
+  'Families',
+  'Millenials',
+  'Generation Z',
+  'Students',
+  'Teens',
+  'Screenagers',
+  'Toddlers',
+  'Babies'
+]
+
+module.exports = {
+  actions: actions,
+  adverbs: adverbs,
+  cliches: cliches,
+  changeWords: changeWords,
+  users: users
+}
