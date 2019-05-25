@@ -106,53 +106,51 @@ const failure = function(res) {
   return res.status
 }
 
-// get a random Wikipedia page title using the API
-const url = 'https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json'
-const wikipedia = axios.get(url).then(success, failure)
-  .then(x => {
-    return x
-  })
-  .catch( (err) => {
-    console.log(`WIKIPEDIA ERROR at ${new Date().toLocaleString('en-AU')}`)
-    console.error(err)
-    publish() // try again
-  })
-
-// Get Twitter trends that aren't hashtags
-const twitter = T.get(
-  'trends/place',
-  {id:'23424748', exclude: 'hashtags'})
-  .then( res => {
-    let response = res.data[0].trends
-    let trends = response.map(x => {
-      return x.name
-    })
-    return random.pick(trends) // return a random trend
-  })
-  .catch( (err) => {
-    console.log(`TWITTER TRENDS ERROR at ${new Date().toLocaleString('en-AU')}`)
-    console.error(err)
-    publish() // try again
-  })
-
-// use wordpos to get four random nouns
-const nouns = wordpos.randNoun({count: 4})
-  .then( x => {
-    let spacer = x.map(n => n.replace(/_/g, ' ')) // replace underscores with spaces
-    let nouns = spacer.map(n => titleCase(n)) // Title case words
-    return nouns
-  })
-  .catch( (err) => {
-    console.log(`WORDPOS ERROR at ${new Date().toLocaleString('en-AU')}`)
-    console.error(err)
-    publish() // try again
-  })
-
-// construct a title and post to twitter and masto
 // this is where the action is
-
 function publish() {
+  // get a random Wikipedia page title using the API
+  const url = 'https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json'
+  const wikipedia = axios.get(url).then(success, failure)
+    .then(x => {
+      return x
+    })
+    .catch( (err) => {
+      console.log(`WIKIPEDIA ERROR at ${new Date().toLocaleString('en-AU')}`)
+      console.error(err)
+      publish() // try again
+    })
 
+  // Get Twitter trends that aren't hashtags
+  const twitter = T.get(
+    'trends/place',
+    {id:'23424748', exclude: 'hashtags'})
+    .then( res => {
+      let response = res.data[0].trends
+      let trends = response.map(x => {
+        return x.name
+      })
+      return random.pick(trends) // return a random trend
+    })
+    .catch( (err) => {
+      console.log(`TWITTER TRENDS ERROR at ${new Date().toLocaleString('en-AU')}`)
+      console.error(err)
+      publish() // try again
+    })
+
+  // use wordpos to get four random nouns
+  const nouns = wordpos.randNoun({count: 4})
+    .then( x => {
+      let spacer = x.map(n => n.replace(/_/g, ' ')) // replace underscores with spaces
+      let nouns = spacer.map(n => titleCase(n)) // Title case words
+      return nouns
+    })
+    .catch( (err) => {
+      console.log(`WORDPOS ERROR at ${new Date().toLocaleString('en-AU')}`)
+      console.error(err)
+      publish() // try again
+    })
+
+  // construct a title and post to twitter and masto
   // Use Promise.all() to await the three promise functions
   // Once they're all finished we end up with an array like this:
   // [wikipedia_title, twitter_trend, [wordpos1, wordpos2, wordpos3, wordpos4] ]
