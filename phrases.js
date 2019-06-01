@@ -116,7 +116,6 @@ const cliches = [
   "Patron-Driven Acquisitions",
   "Professional Certification",
   "Radical Librarians",
-  "Restructures",
   "Research Offices",
   "SciHub",
   "Semantic Markup",
