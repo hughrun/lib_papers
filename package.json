@@ -1,10 +1,11 @@
 {
   "name": "lib_papers",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A bot for Twitter and Mastodon that creates fake Library Science conference talk titles",
   "main": "lib_papers.js",
   "dependencies": {
     "axios": ">=0.19.0",
+    "feedparser-promised": "^2.0.1",
     "mastodon": "^1.2.2",
     "random-js": "^2.1.0",
     "twit": "^2.2.11",

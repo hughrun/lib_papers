@@ -26,7 +26,8 @@ const axios = require('axios') // axios to make http requests to wikipedia
 const Masto = require('mastodon') // For interacting with the Mastodon API
 const { Random } = require('random-js') // for random choices: Math.random is unreliable
 const Twit = require('twit') // For interacting with the Twitter API
-const WordPOS = require('wordpos') // Word Parts of Speech for random nouns
+const WordPOS = require('wordpos') // Word Parts Of Speech for random nouns
+const feedparser = require('feedparser-promised'); // for parsing RSS/Atom
 
 // require locals
 const phrases = require('./phrases.js') // phrases is now a module rather than the text file in verson 1
@@ -117,28 +118,11 @@ function publish() {
     .catch( (err) => {
       console.log(`WIKIPEDIA ERROR at ${new Date().toLocaleString('en-AU')}`)
       console.error(err)
-      publish() // try again
-    })
-
-  // Get Twitter trends that aren't hashtags
-  const twitter = T.get(
-    'trends/place',
-    {id:'23424748', exclude: 'hashtags'})
-    .then( res => {
-      let response = res.data[0].trends
-      let trends = response.map(x => {
-        return x.name
-      })
-      return random.pick(trends) // return a random trend
-    })
-    .catch( (err) => {
-      console.log(`TWITTER TRENDS ERROR at ${new Date().toLocaleString('en-AU')}`)
-      console.error(err)
-      publish() // try again
+      return 'Internet' // default value on error
     })
 
   // use wordpos to get four random nouns
-  const nouns = wordpos.randNoun({count: 4})
+  const nouns = wordpos.randNoun({count: 2})
     .then( x => {
       let spacer = x.map(n => n.replace(/_/g, ' ')) // replace underscores with spaces
       let nouns = spacer.map(n => titleCase(n)) // Title case words
@@ -147,23 +131,56 @@ function publish() {
     .catch( (err) => {
       console.log(`WORDPOS ERROR at ${new Date().toLocaleString('en-AU')}`)
       console.error(err)
-      publish() // try again
+      return ['Books', 'Revolution'] // default value on error
     })
 
+  const teenVogue = feedparser.parse('https://www.teenvogue.com/feed/rss')
+                    .then( items => {
+                      let picks = random.sample(items, 2) // pick two random headlines
+                      let headlines = picks.map(item => item.title)
+                      return headlines
+                    })
+                    .catch( err => {
+                      console.error(err)
+                      return ['Teen Vogue RSS Feed Failing', 'Teen Vogue Comrades Offline']
+                    })
+
+  const jacobin = feedparser.parse('https://jacobinmag.com/feed')
+                    .then( items => {
+                      let picks = random.sample(items, 2) // pick two random headlines
+                      let headlines = picks.map(item => item.title)
+                      return headlines
+                    })
+                    .catch( err => {
+                      console.error(err)
+                      return [`Jacobin's RSS Feed is Down`, `Jacobin News Offline`]
+                    })
+
+  const theAge = feedparser.parse('https://www.theage.com.au/rss/technology.xml')
+                    .then( items => {
+                      let picks = random.sample(items, 2) // pick two random headlines
+                      let headlines = picks.map(item => titleCase(item.title))
+                      return headlines
+                    })
+                    .catch( err => {
+                      console.error(err)
+                      return ['The Age RSS Feed is Down', 'No Technology News From Fairfax']
+                    })
+
   // construct a title and post to twitter and masto
-  // Use Promise.all() to await the three promise functions
-  // Once they're all finished we end up with an array like this:
-  // [wikipedia_title, twitter_trend, [wordpos1, wordpos2, wordpos3, wordpos4] ]
-  Promise.all([wikipedia, twitter, nouns]).then(vals => {
-    const words = [vals[0], vals[1]].concat(vals[2]) // flatten the two arrays into one
-    const terms = random.sample(words, 2) // pick two random terms from the six options
+  // Use Promise.all() to await the five promise functions
+
+  Promise.all([nouns, wikipedia, teenVogue, jacobin, theAge]).then(vals => {
+    const words = vals[0].concat([vals[1]]) // flatten the nouns array and combine with wikipedia title in a new array
+    const headlines = vals[2].concat(vals[3], vals[4]) // flatten the three headline arrays into one
+    const terms = random.sample(words, 2) // pick two random terms from the options
     // choose the various components
     const cliche = random.pick(phrases.cliches)
     const adverb = random.pick(phrases.adverbs)
     const changeWord = random.pick(phrases.changeWords)
     const actions = random.pick(phrases.actions)
     const users = random.pick(phrases.users)
-    const titles =
+    const titlesOne =
     [
       `Is ${terms[0]} The Future Of Libraries?`,
       `Are Libraries The Original ${terms[0]}?`,
@@ -183,9 +200,20 @@ function publish() {
       `Librarians Prefer ${cliche} Over ${terms[0]}: A Longitudinal Study`
     ]
 
-    // pick a random status construction from the list above
-    const status = random.pick(titles)
+    const titlesTwo = [
+      `${headlines[0]} - Ramifications for ${users}`,
+      `${headlines[0]} - Librarians ${random.pick(["Aren't Impressed", "Are Embracing It", "Are In Disarray", "Are Ready"])}`,
+      `${headlines[1]} And Librarians Are ${actions} What They Can`,
+      `${headlines[1]} - But ${adverb} are Librarians ${actions} ${terms[0]}?`,
+      `${headlines[2]} - Is This ${adverb} Librarians are ${actions} ${cliche}?`,
+      `${headlines[3]} - And ${cliche} Won't Go Down Without a Fight`,
+      `${headlines[3]} - But Are librarians ${actions} Enough?`,
+      `${headlines[4]} - ${adverb} Libraries are Preparing ${users}`,
+      `${headlines[5]} - Is This the End of ${cliche}?`
+    ]
 
+    // pick a random status construction from the list above
+    const status = random.pick(random.pick([titlesOne, titlesTwo]))
     // post to mastodon
     M.post('statuses', { status: status})
     .then( () => {
@@ -197,12 +225,14 @@ function publish() {
       console.log(`"${status}" posted at ${new Date().toLocaleString('en-AU')}`)
     })
     .catch( (err) => {
-      console.log(`POSTING ERROR at ${new Date().toLocaleString('en-AU')}`)
-      console.error(error)
-      // do something with the error
+      console.log(`ERROR POSTING at ${new Date().toLocaleString('en-AU')}`)
+      console.error(err)
+      console.log('\n')
     })
   })
 }
 
+// post on load
+publish()
 // Set loop to run publish() every 5 hours
 const timer = setInterval (function () {publish()}, 18e+6)

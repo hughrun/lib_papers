@@ -3,7 +3,7 @@ const actions =
   'Lending',
   'Cataloguing',
   'Standardising',
-  'Co-Ordinating',
+  'Co-ordinating',
   'Embracing',
   'Revolutionising',
   'Saving',
@@ -11,7 +11,8 @@ const actions =
   'Preserving',
   'Reading',
   'Weeding',
-  'Shelving'
+  'Shelving',
+  'Helping'
 ]
 
 const adverbs =
@@ -38,6 +39,7 @@ const cliches = [
   "Academic Presses",
   "Artificial Intelligence",
   "Authority Files",
+  "ALA",
   "ALIA",
   "Alma",
   "All-Gender Toilets",
@@ -47,11 +49,13 @@ const cliches = [
   "Card Catalogues",
   "Cardigans",
   "Censorship",
+  "CILIP",
   "The Cloud",
   "Code Clubs",
   "Code4Lib",
   "Co-Design",
   "Community-Led Librarianship",
+  "Controlled Vocabularies",
   "De-Professionalisation",
   "Design Thinking",
   "the Dewey Decimal System",
@@ -97,11 +101,13 @@ const cliches = [
   "MaRC",
   "Makerspaces",
   "Marginalia",
+  "Metadata",
   "Middle Class White Guys Who 'Never Use the Library'",
   "Minecraft",
   "Nap Pods",
   "National Bibliographic Databases",
   "Nazis In The Meeting Room",
+  "newCardigan",
   "OCLC",
   "OERs",
   "Old Book Smell",
@@ -116,7 +122,6 @@ const cliches = [
   "Patron-Driven Acquisitions",
   "Professional Certification",
   "Radical Librarians",
-  "Research Offices",
   "SciHub",
   "Semantic Markup",
   "Stain-Resistant Furniture",
@@ -124,6 +129,7 @@ const cliches = [
   "Summon",
   "Tenure",
   "'Thinking Like A Startup'",
+  "Union Catalogues",
   "Vendor Consolidation",
   "Wikipedia"
 ]
@@ -133,7 +139,6 @@ const users =
   'Seniors',
   'Baby Boomers',
   'Academics',
-  'Veterans',
   'Funders',
   'Donors',
   'Councillors',
