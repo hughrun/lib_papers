@@ -113,7 +113,7 @@ function publish() {
   const url = 'https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json'
   const wikipedia = axios.get(url).then(success, failure)
     .then(x => {
-      return x
+      return titleCase(x)
     })
     .catch( (err) => {
       console.log(`WIKIPEDIA ERROR at ${new Date().toLocaleString('en-AU')}`)
