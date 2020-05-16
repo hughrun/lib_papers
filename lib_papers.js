@@ -60,8 +60,8 @@ const titleCase = function (string) {
   // Capitalise
   // abbreviations like E.P.A.
   // Hyphenated-Words
-  // strings longer than 2 letters with no vowels like KLF
-  const regex = /(\.[a-z])|(\-[a-z])|^([bcdfghjklmnpqrstvwxyz]){3,4}$/g
+  // where they are 2 to 3 letter words
+  const regex = /(\.[a-z])|(\-[a-z])|^([a-z]){2,3}$/g
   string = string.replace(regex, function(x) {
     return x.toUpperCase()
   })
@@ -122,7 +122,7 @@ function publish() {
     })
 
   // use wordpos to get four random nouns
-  const nouns = wordpos.randNoun({count: 2})
+  const nouns = wordpos.randNoun({count: 4})
     .then( x => {
       let spacer = x.map(n => n.replace(/_/g, ' ')) // replace underscores with spaces
       let nouns = spacer.map(n => titleCase(n)) // Title case words
@@ -134,31 +134,9 @@ function publish() {
       return ['Books', 'Revolution'] // default value on error
     })
 
-  const teenVogue = feedparser.parse('https://www.teenvogue.com/feed/rss')
-                    .then( items => {
-                      let picks = random.sample(items, 2) // pick two random headlines
-                      let headlines = picks.map(item => item.title)
-                      return headlines
-                    })
-                    .catch( err => {
-                      console.error(err)
-                      return ['Teen Vogue RSS Feed Failing', 'Teen Vogue Comrades Offline']
-                    })
-
-  const jacobin = feedparser.parse('https://jacobinmag.com/feed')
-                    .then( items => {
-                      let picks = random.sample(items, 2) // pick two random headlines
-                      let headlines = picks.map(item => item.title)
-                      return headlines
-                    })
-                    .catch( err => {
-                      console.error(err)
-                      return [`Jacobin's RSS Feed is Down`, `Jacobin News Offline`]
-                    })
-
   const theAge = feedparser.parse('https://www.theage.com.au/rss/technology.xml')
                     .then( items => {
-                      let picks = random.sample(items, 2) // pick two random headlines
+                      let picks = random.sample(items, 4) // pick four random headlines
                       let headlines = picks.map(item => titleCase(item.title))
                       return headlines
                     })
@@ -168,11 +146,11 @@ function publish() {
                     })
 
   // construct a title and post to twitter and masto
-  // Use Promise.all() to await the five promise functions
+  // Use Promise.all() to await the three promise functions
 
-  Promise.all([nouns, wikipedia, teenVogue, jacobin, theAge]).then(vals => {
+  Promise.all([nouns, wikipedia, theAge]).then(vals => {
     const words = vals[0].concat([vals[1]]) // flatten the nouns array and combine with wikipedia title in a new array
-    const headlines = vals[2].concat(vals[3], vals[4]) // flatten the three headline arrays into one
+    const headlines = vals[2]
     const terms = random.sample(words, 2) // pick two random terms from the options
     // choose the various components
     const cliche = random.pick(phrases.cliches)
@@ -182,34 +160,31 @@ function publish() {
     const users = random.pick(phrases.users)
     const titlesOne =
     [
-      `Is ${terms[0]} The Future Of Libraries?`,
-      `Are Libraries The Original ${terms[0]}?`,
-      `Is ${terms[1]} Making Libraries Obsolete?`,
-      `${adverb} Every Library Can Use ${terms[0]}`,
-      `${terms[1]}: A Game Changer For Libraries`,
-      `${adverb} This Year's Library Journal Movers and Shakers Are ${actions} ${terms[1]}`,
-      `${adverb} Libraries Should be ${actions} ${terms[1]}`,
+      `Is ${random.pick(terms)} The Future Of Libraries?`,
+      `Are Libraries The Original ${random.pick(terms)}?`,
+      `Is ${random.pick(terms)} Making Libraries Obsolete?`,
+      `${adverb} Every Library Can Use ${random.pick(terms)}`,
+      `${random.pick(terms)}: A Game Changer For Libraries`,
+      `${adverb} This Year's Library Journal Movers and Shakers Are ${actions} ${random.pick(terms)}`,
+      `${adverb} Libraries Should be ${actions} ${random.pick(terms)}`,
       `${adverb} ${terms[0]} Could Be The ${terms[1]} Of Libraries`,
-      `${adverb} Our Library Used ${terms[1]} To ${changeWord} ${cliche}`,
-      `Is ${terms[0]} The New ${cliche}?`,
-      `Improving Library User Outcomes For ${users} With ${terms[1]}`,
-      `What Our Library Learned By ${actions} ${terms[1]}`,
-      `Combining ${cliche} With ${terms[1]} To Build Better Outcomes For ${users}`,
-      `${adverb} Our Library Attracted More ${users} With ${terms[0]}`,
-      `Working With ${users} To Put ${terms[0]} In ${cliche}`,
-      `Librarians Prefer ${cliche} Over ${terms[0]}: A Longitudinal Study`
+      `${adverb} Our Library Used ${random.pick(terms)} To ${changeWord} ${cliche}`,
+      `Is ${random.pick(terms)} The New ${cliche}?`,
+      `Improving Library User Outcomes For ${users} With ${random.pick(terms)}`,
+      `What Our Library Learned By ${actions} ${random.pick(terms)}`,
+      `Combining ${cliche} With ${random.pick(terms)} To Build Better Outcomes For ${users}`,
+      `${adverb} Our Library Attracted More ${users} With ${random.pick(terms)}`,
+      `Working With ${users} To Put ${random.pick(terms)} In ${cliche}`,
+      `Librarians Prefer ${cliche} Over ${random.pick(terms)}: A Longitudinal Study`
     ]
 
     const titlesTwo = [
-      `${headlines[0]} - Ramifications for ${users}`,
-      `${headlines[0]} - Librarians ${random.pick(["Aren't Impressed", "Are Embracing It", "Are In Disarray", "Are Ready"])}`,
-      `${headlines[1]} And Librarians Are ${actions} What They Can`,
-      `${headlines[1]} - But ${adverb} are Librarians ${actions} ${terms[0]}?`,
-      `${headlines[2]} - Is This ${adverb} Librarians are ${actions} ${cliche}?`,
-      `${headlines[3]} - And ${cliche} Won't Go Down Without a Fight`,
-      `${headlines[3]} - But Are librarians ${actions} Enough?`,
-      `${headlines[4]} - ${adverb} Libraries are Preparing ${users}`,
-      `${headlines[5]} - Is This the End of ${cliche}?`
+      `${random.pick(headlines)} - Ramifications for ${users}`,
+      `${random.pick(headlines)} - Librarians ${random.pick(["Aren't Impressed", "Are Embracing It", "Are In Disarray", "Are Ready"])}`,
+      `${random.pick(headlines)} - But ${adverb} are Librarians ${actions} ${random.pick(terms)}?`,
+      `${random.pick(headlines)} - Is This ${adverb} Librarians are ${actions} ${cliche}?`,
+      `${random.pick(headlines)} - ${adverb} Libraries are Preparing ${users}`,
+      `${random.pick(headlines)} - Is This the End of ${cliche}?`
     ]
 
     // pick a random status construction from the list above
